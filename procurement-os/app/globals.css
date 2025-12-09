@@ -43,3 +43,20 @@ a {
 @media (prefers-color-scheme: dark) {
   html { color-scheme: dark; }
 }
+
+/* --- IMPORTANT: FIX LAYOUT BREAKING --- */
+html, body {
+  display: block;
+  position: relative;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Make sidebar links always display as column items */
+aside a {
+  display: block !important;
+  width: 100%;
+}

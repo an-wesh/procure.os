@@ -1,4 +1,3 @@
-// app/qc/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -38,15 +37,12 @@ export default function QCPage() {
     setQcs(qcData || []);
   }
 
-  // ✅ FIXED — must be async, must not call parseText(), must return fetch response
   async function parseText() {
     if (!form.raw_text) return;
 
     const resp = await fetch("/api/parse-qc", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: form.raw_text }),
     });
 
@@ -91,74 +87,113 @@ export default function QCPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-2xl mb-4">QC Entry</h1>
+    <div className="max-w-6xl mx-auto p-6">
 
+      {/* PAGE TITLE */}
+      <h1 className="text-3xl font-bold mb-6">QC Entry</h1>
+
+      {/* FORM CARD */}
       <form
         onSubmit={submit}
-        className="bg-white p-4 rounded shadow grid grid-cols-2 gap-3 mb-6"
+        className="
+          bg-white 
+          p-6 
+          rounded-xl 
+          shadow-md 
+          border 
+          grid 
+          grid-cols-1 
+          md:grid-cols-2 
+          gap-4 
+          mb-10
+        "
       >
-        <select
-          required
-          value={form.po_id}
-          onChange={(e) => setForm({ ...form, po_id: e.target.value })}
-          className="p-2 border"
-        >
-          <option value="">Select PO</option>
-          {pos.map((p) => (
-            <option key={p.id} value={p.id}>
-              PO-{String(p.id).padStart(4, "0")} – {p.product}
-            </option>
-          ))}
-        </select>
+        {/* PO SELECT */}
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold">Purchase Order *</label>
+          <select
+            required
+            value={form.po_id}
+            onChange={(e) => setForm({ ...form, po_id: e.target.value })}
+            className="p-3 border rounded-lg"
+          >
+            <option value="">Select PO</option>
+            {pos.map((p) => (
+              <option key={p.id} value={p.id}>
+                PO-{String(p.id).padStart(4, "0")} — {p.product}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <textarea
-          placeholder="Paste text from CoA / PDF here..."
-          value={form.raw_text}
-          onChange={(e) => setForm({ ...form, raw_text: e.target.value })}
-          className="p-2 border col-span-2"
-        />
+        {/* RAW TEXT / PDF PASTE AREA */}
+        <div className="flex flex-col gap-1 md:col-span-2">
+          <label className="font-semibold">Paste CoA / PDF Text</label>
+          <textarea
+            placeholder="Paste CoA text here for AI extraction..."
+            value={form.raw_text}
+            onChange={(e) => setForm({ ...form, raw_text: e.target.value })}
+            className="p-3 border rounded-lg h-32"
+          />
+        </div>
 
-        {/* Button FIXED — must be parseText, NOT parseText() */}
-        <div className="col-span-2 flex gap-2">
+        {/* AI PARSE BUTTON */}
+        <div className="md:col-span-2 flex justify-start">
           <button
             type="button"
             onClick={parseText}
-            className="px-3 py-2 bg-gray-200 rounded"
+            className="px-4 py-2 bg-gray-200 rounded-lg shadow hover:bg-gray-300 transition"
           >
             AI Parse
           </button>
         </div>
 
-        <input
-          placeholder="Batch No"
-          value={form.batch_no}
-          onChange={(e) => setForm({ ...form, batch_no: e.target.value })}
-          className="p-2 border"
-        />
+        {/* BATCH NO */}
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold">Batch No</label>
+          <input
+            placeholder="Batch No"
+            value={form.batch_no}
+            onChange={(e) => setForm({ ...form, batch_no: e.target.value })}
+            className="p-3 border rounded-lg"
+          />
+        </div>
 
-        <input
-          placeholder="Purity"
-          value={form.purity}
-          onChange={(e) => setForm({ ...form, purity: e.target.value })}
-          className="p-2 border"
-        />
+        {/* PURITY */}
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold">Purity (%)</label>
+          <input
+            placeholder="Purity"
+            value={form.purity}
+            onChange={(e) => setForm({ ...form, purity: e.target.value })}
+            className="p-3 border rounded-lg"
+          />
+        </div>
 
-        <input
-          placeholder="Moisture"
-          value={form.moisture}
-          onChange={(e) => setForm({ ...form, moisture: e.target.value })}
-          className="p-2 border"
-        />
+        {/* MOISTURE */}
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold">Moisture (%)</label>
+          <input
+            placeholder="Moisture"
+            value={form.moisture}
+            onChange={(e) => setForm({ ...form, moisture: e.target.value })}
+            className="p-3 border rounded-lg"
+          />
+        </div>
 
-        <input
-          placeholder="Appearance"
-          value={form.appearance}
-          onChange={(e) => setForm({ ...form, appearance: e.target.value })}
-          className="p-2 border"
-        />
+        {/* APPEARANCE */}
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold">Appearance</label>
+          <input
+            placeholder="Appearance"
+            value={form.appearance}
+            onChange={(e) => setForm({ ...form, appearance: e.target.value })}
+            className="p-3 border rounded-lg"
+          />
+        </div>
 
-        <label className="flex items-center gap-2 p-2">
+        {/* ACCEPTED CHECKBOX */}
+        <div className="flex items-center gap-2 mt-2">
           <input
             type="checkbox"
             checked={form.accepted}
@@ -166,43 +201,51 @@ export default function QCPage() {
               setForm({ ...form, accepted: e.target.checked })
             }
           />
-          Accepted
-        </label>
+          <label className="font-semibold">Accepted</label>
+        </div>
 
-        <input
-          placeholder="CoA URL (optional)"
-          value={form.coa_url}
-          onChange={(e) => setForm({ ...form, coa_url: e.target.value })}
-          className="p-2 border"
-        />
+        {/* COA URL */}
+        <div className="flex flex-col gap-1">
+          <label className="font-semibold">CoA URL (optional)</label>
+          <input
+            placeholder="https://example.com/coa.pdf"
+            value={form.coa_url}
+            onChange={(e) => setForm({ ...form, coa_url: e.target.value })}
+            className="p-3 border rounded-lg"
+          />
+        </div>
 
-        <div className="col-span-2 text-right">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded">
-            Save QC
+        {/* SUBMIT */}
+        <div className="md:col-span-2 flex justify-end">
+          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium shadow hover:bg-blue-700 transition">
+            Save QC Entry
           </button>
         </div>
       </form>
 
-      <section className="bg-white p-4 rounded shadow">
-        <h2 className="font-semibold mb-2">QC Entries</h2>
-        <table className="w-full text-left">
+      {/* QC TABLE */}
+      <section className="bg-white p-6 rounded-xl shadow-md border">
+        <h2 className="text-xl font-semibold mb-4">QC Entries</h2>
+
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="text-sm text-gray-600">
-              <th>PO</th>
-              <th>Batch</th>
-              <th>Purity</th>
-              <th>Moisture</th>
-              <th>Accepted</th>
+            <tr className="bg-gray-100 border-b text-gray-700">
+              <th className="py-3 px-4 text-left">PO</th>
+              <th className="py-3 px-4 text-left">Batch</th>
+              <th className="py-3 px-4 text-left">Purity</th>
+              <th className="py-3 px-4 text-left">Moisture</th>
+              <th className="py-3 px-4 text-left">Accepted</th>
             </tr>
           </thead>
+
           <tbody>
             {qcs.map((q) => (
-              <tr key={q.id} className="border-t">
-                <td>PO-{String(q.po_id).padStart(4, "0")}</td>
-                <td>{q.batch_no}</td>
-                <td>{q.purity}</td>
-                <td>{q.moisture}</td>
-                <td>{q.accepted ? "Yes" : "No"}</td>
+              <tr key={q.id} className="border-b hover:bg-gray-50 transition">
+                <td className="py-3 px-4">PO-{String(q.po_id).padStart(4, "0")}</td>
+                <td className="py-3 px-4">{q.batch_no}</td>
+                <td className="py-3 px-4">{q.purity}</td>
+                <td className="py-3 px-4">{q.moisture}</td>
+                <td className="py-3 px-4">{q.accepted ? "Yes" : "No"}</td>
               </tr>
             ))}
           </tbody>
